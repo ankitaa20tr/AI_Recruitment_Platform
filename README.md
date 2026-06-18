@@ -53,7 +53,7 @@ Overall Score =
 + 10% Soft Skill Match (parsed soft skills vs JD)
 ```
 
-Embeddings use Google `text-embedding-004` (or deterministic mock embeddings in demo mode). Domain scoring uses **vector similarity** — not raw keyword counts.
+Embeddings use Google `gemini-embedding-001` (or deterministic mock embeddings in demo mode). Domain scoring uses **vector similarity** — not raw keyword counts.
 
 ---
 
@@ -306,7 +306,7 @@ python3 -m pytest tests/ -v
 | Frontend | Next.js 15, React 19, TypeScript, Tailwind CSS 4 |
 | Database | PostgreSQL 16 (SQLAlchemy 2 + asyncpg) |
 | Vector Store | ChromaDB |
-| AI | Google Gemini `gemini-2.0-flash` + `text-embedding-004` |
+| AI | Google Gemini `gemini-2.0-flash` + `gemini-embedding-001` |
 | Documents | PyMuPDF, pdfplumber, python-docx |
 | Reports | ReportLab (PDF) |
 | DevOps | Docker Compose |

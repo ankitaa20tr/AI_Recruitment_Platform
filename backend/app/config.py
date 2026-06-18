@@ -1,5 +1,14 @@
 from pydantic_settings import BaseSettings
 from functools import lru_cache
+from pathlib import Path
+
+# Resolve .env by absolute path so it loads no matter what the working
+# directory is (e.g. running uvicorn from backend/ vs the repo root).
+# A backend/.env, if present, overrides the repo-root .env. Inside Docker
+# these files are absent and env vars are injected directly — both are fine.
+_BACKEND_DIR = Path(__file__).resolve().parents[1]
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+_ENV_FILES = (str(_REPO_ROOT / ".env"), str(_BACKEND_DIR / ".env"))
 
 
 class Settings(BaseSettings):
@@ -12,7 +21,7 @@ class Settings(BaseSettings):
     max_upload_size_mb: int = 10
     rate_limit_per_minute: int = 60
     gemini_model: str = "gemini-2.0-flash"
-    embedding_model: str = "text-embedding-004"
+    embedding_model: str = "gemini-embedding-001"
 
     @property
     def use_mock_ai(self) -> bool:
@@ -23,7 +32,7 @@ class Settings(BaseSettings):
         return [o.strip() for o in self.cors_origins.split(",") if o.strip()]
 
     class Config:
-        env_file = ".env"
+        env_file = _ENV_FILES
         extra = "ignore"
 
 

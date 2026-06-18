@@ -14,6 +14,10 @@ settings = get_settings()
 MAX_OUTPUT_TOKENS = 1500
 # Trim parser inputs — most JDs/CVs fit comfortably within this.
 MAX_INPUT_CHARS = 8000
+# Output dimensionality requested from the embedding model. 768 is the
+# recommended compact size for gemini-embedding-001 and keeps the vector
+# store small; cosine_similarity normalises so no manual scaling is needed.
+EMBEDDING_DIM = 768
 
 
 def _hash(text: str) -> str:
@@ -55,6 +59,7 @@ class AIService:
                 response = await self.client.aio.models.embed_content(
                     model=settings.embedding_model,
                     contents=text[:MAX_INPUT_CHARS],
+                    config=types.EmbedContentConfig(output_dimensionality=EMBEDDING_DIM),
                 )
                 emb = list(response.embeddings[0].values)
             except Exception:
@@ -85,6 +90,7 @@ class AIService:
                     response = await self.client.aio.models.embed_content(
                         model=settings.embedding_model,
                         contents=[t[:MAX_INPUT_CHARS] for t in miss_texts],
+                        config=types.EmbedContentConfig(output_dimensionality=EMBEDDING_DIM),
                     )
                     embs = [list(e.values) for e in response.embeddings]
                 except Exception:
