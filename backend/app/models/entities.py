@@ -1,4 +1,6 @@
+from __future__ import annotations
 import uuid
+from typing import Optional
 from datetime import datetime
 from sqlalchemy import String, Text, Float, Integer, Boolean, DateTime, ForeignKey, JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -21,7 +23,7 @@ class JobDescription(Base):
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     title: Mapped[str] = mapped_column(String(255), default="Untitled Role")
     raw_text: Mapped[str] = mapped_column(Text, default="")
-    file_path: Mapped[str | None] = mapped_column(String(512), nullable=True)
+    file_path: Mapped[Optional[str]] = mapped_column(String(512), nullable=True)
     parsed_data: Mapped[dict] = mapped_column(JSON, default=dict)
     confidence_scores: Mapped[dict] = mapped_column(JSON, default=dict)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
@@ -34,28 +36,28 @@ class Candidate(Base):
     __tablename__ = "candidates"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    job_description_id: Mapped[uuid.UUID | None] = mapped_column(
+    job_description_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         UUID(as_uuid=True), ForeignKey("job_descriptions.id"), nullable=True
     )
     name: Mapped[str] = mapped_column(String(255), default="Unknown")
-    email: Mapped[str | None] = mapped_column(String(255), nullable=True)
-    phone: Mapped[str | None] = mapped_column(String(50), nullable=True)
-    location: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    email: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    phone: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    location: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     raw_text: Mapped[str] = mapped_column(Text, default="")
-    file_path: Mapped[str | None] = mapped_column(String(512), nullable=True)
+    file_path: Mapped[Optional[str]] = mapped_column(String(512), nullable=True)
     parsed_data: Mapped[dict] = mapped_column(JSON, default=dict)
     years_of_experience: Mapped[float] = mapped_column(Float, default=0.0)
     status: Mapped[str] = mapped_column(String(50), default="processed")
     is_hidden_gem: Mapped[bool] = mapped_column(Boolean, default=False)
-    rank: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    rank: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
-    job_description: Mapped["JobDescription | None"] = relationship(back_populates="candidates")
+    job_description: Mapped[Optional[JobDescription]] = relationship(back_populates="candidates")
     skills: Mapped[list["CandidateSkill"]] = relationship(back_populates="candidate", cascade="all, delete-orphan")
     experiences: Mapped[list["CandidateExperience"]] = relationship(
         back_populates="candidate", cascade="all, delete-orphan"
     )
-    scores: Mapped["CandidateScore | None"] = relationship(
+    scores: Mapped[Optional[CandidateScore]] = relationship(
         back_populates="candidate", uselist=False, cascade="all, delete-orphan"
     )
     interview_questions: Mapped[list["InterviewQuestion"]] = relationship(
@@ -81,9 +83,9 @@ class CandidateExperience(Base):
     candidate_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("candidates.id"))
     company: Mapped[str] = mapped_column(String(255))
     role: Mapped[str] = mapped_column(String(255), default="")
-    start_date: Mapped[str | None] = mapped_column(String(50), nullable=True)
-    end_date: Mapped[str | None] = mapped_column(String(50), nullable=True)
-    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    start_date: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    end_date: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
     candidate: Mapped["Candidate"] = relationship(back_populates="experiences")
 
@@ -100,7 +102,7 @@ class CandidateScore(Base):
     education_score: Mapped[float] = mapped_column(Float, default=0.0)
     soft_skill_score: Mapped[float] = mapped_column(Float, default=0.0)
     explanation: Mapped[dict] = mapped_column(JSON, default=dict)
-    executive_summary: Mapped[str | None] = mapped_column(Text, nullable=True)
+    executive_summary: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
     candidate: Mapped["Candidate"] = relationship(back_populates="scores")
 
@@ -132,7 +134,7 @@ class ChatHistory(Base):
     __tablename__ = "chat_history"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    job_description_id: Mapped[uuid.UUID | None] = mapped_column(
+    job_description_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         UUID(as_uuid=True), ForeignKey("job_descriptions.id"), nullable=True
     )
     session_id: Mapped[str] = mapped_column(String(100))
@@ -145,13 +147,13 @@ class ProcessingJob(Base):
     __tablename__ = "processing_jobs"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    job_description_id: Mapped[uuid.UUID | None] = mapped_column(
+    job_description_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         UUID(as_uuid=True), ForeignKey("job_descriptions.id"), nullable=True
     )
     job_type: Mapped[str] = mapped_column(String(50))
     status: Mapped[str] = mapped_column(String(20), default=ProcessingStatus.PENDING.value)
     progress: Mapped[int] = mapped_column(Integer, default=0)
     total_items: Mapped[int] = mapped_column(Integer, default=0)
-    message: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    message: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
