@@ -1,15 +1,17 @@
 import json
 import hashlib
 import numpy as np
-from openai import AsyncOpenAI
+from google import genai
+from google.genai import types
 
 from app.config import get_settings
 from app.schemas import ParsedJD, ParsedCV, ScoreBreakdown, Explanation
 
 settings = get_settings()
 
-# Cap output tokens so completions can't ramble and inflate cost.
-MAX_OUTPUT_TOKENS = 700
+# Cap output tokens so completions can't ramble and inflate cost. Large enough
+# to hold a full parsed CV or the combined explanation+questions JSON.
+MAX_OUTPUT_TOKENS = 1500
 # Trim parser inputs — most JDs/CVs fit comfortably within this.
 MAX_INPUT_CHARS = 8000
 
@@ -36,7 +38,7 @@ def cosine_similarity(a: list[float], b: list[float]) -> float:
 
 class AIService:
     def __init__(self):
-        self.client = AsyncOpenAI(api_key=settings.openai_api_key) if settings.openai_api_key else None
+        self.client = genai.Client(api_key=settings.gemini_api_key) if settings.gemini_api_key else None
         # Content-hash caches so repeated/identical inputs cost zero tokens
         # (e.g. re-ranking the same pool, re-uploading the same CV).
         self._embedding_cache: dict[str, list[float]] = {}
@@ -50,11 +52,11 @@ class AIService:
             emb = _mock_embedding(text)
         else:
             try:
-                response = await self.client.embeddings.create(
+                response = await self.client.aio.models.embed_content(
                     model=settings.embedding_model,
-                    input=text[:MAX_INPUT_CHARS],
+                    contents=text[:MAX_INPUT_CHARS],
                 )
-                emb = response.data[0].embedding
+                emb = list(response.embeddings[0].values)
             except Exception:
                 emb = _mock_embedding(text)
         self._embedding_cache[key] = emb
@@ -80,11 +82,11 @@ class AIService:
                 embs = [_mock_embedding(t) for t in miss_texts]
             else:
                 try:
-                    response = await self.client.embeddings.create(
+                    response = await self.client.aio.models.embed_content(
                         model=settings.embedding_model,
-                        input=[t[:MAX_INPUT_CHARS] for t in miss_texts],
+                        contents=[t[:MAX_INPUT_CHARS] for t in miss_texts],
                     )
-                    embs = [item.embedding for item in response.data]
+                    embs = [list(e.values) for e in response.embeddings]
                 except Exception:
                     embs = [_mock_embedding(t) for t in miss_texts]
             for i, t, emb in zip(miss_idx, miss_texts, embs):
@@ -97,17 +99,17 @@ class AIService:
         if settings.use_mock_ai or not self.client:
             return {}
         try:
-            response = await self.client.chat.completions.create(
-                model=settings.openai_model,
-                messages=[
-                    {"role": "system", "content": system},
-                    {"role": "user", "content": user},
-                ],
-                response_format={"type": "json_object"},
-                temperature=0.2,
-                max_tokens=MAX_OUTPUT_TOKENS,
+            response = await self.client.aio.models.generate_content(
+                model=settings.gemini_model,
+                contents=user,
+                config=types.GenerateContentConfig(
+                    system_instruction=system,
+                    temperature=0.2,
+                    max_output_tokens=MAX_OUTPUT_TOKENS,
+                    response_mime_type="application/json",
+                ),
             )
-            return json.loads(response.choices[0].message.content or "{}")
+            return json.loads(response.text or "{}")
         except Exception:
             return {}
 
@@ -115,16 +117,16 @@ class AIService:
         if settings.use_mock_ai or not self.client:
             return ""
         try:
-            response = await self.client.chat.completions.create(
-                model=settings.openai_model,
-                messages=[
-                    {"role": "system", "content": system},
-                    {"role": "user", "content": user},
-                ],
-                temperature=0.4,
-                max_tokens=MAX_OUTPUT_TOKENS,
+            response = await self.client.aio.models.generate_content(
+                model=settings.gemini_model,
+                contents=user,
+                config=types.GenerateContentConfig(
+                    system_instruction=system,
+                    temperature=0.4,
+                    max_output_tokens=MAX_OUTPUT_TOKENS,
+                ),
             )
-            return response.choices[0].message.content or ""
+            return response.text or ""
         except Exception:
             return ""
 
