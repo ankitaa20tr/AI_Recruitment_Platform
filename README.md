@@ -53,7 +53,7 @@ Overall Score =
 + 10% Soft Skill Match (parsed soft skills vs JD)
 ```
 
-Embeddings use OpenAI `text-embedding-3-small` (or deterministic mock embeddings in demo mode). Domain scoring uses **vector similarity** — not raw keyword counts.
+Embeddings use Google `text-embedding-004` (or deterministic mock embeddings in demo mode). Domain scoring uses **vector similarity** — not raw keyword counts.
 
 ---
 
@@ -68,7 +68,7 @@ flowchart LR
 
     subgraph parse [Parsing]
         DocParser[Document Parser\nPDF / DOCX / TXT]
-        AIParse[AI Parser\nOpenAI or Demo Mock]
+        AIParse[AI Parser\nGemini or Demo Mock]
     end
 
     subgraph score [Ranking]
@@ -126,7 +126,7 @@ docker compose up --build
 | Swagger Docs | http://localhost:8000/docs |
 | Health Check | http://localhost:8000/health |
 
-**Demo mode** is enabled by default (`DEMO_MODE=true`). No OpenAI API key required — intelligent mock AI handles parsing, scoring, explanations, and questions for offline demos.
+**Demo mode** is enabled by default (`DEMO_MODE=true`). No Gemini API key required — intelligent mock AI handles parsing, scoring, explanations, and questions for offline demos.
 
 ---
 
@@ -165,7 +165,7 @@ Loads the sample JD, parses all 25 CVs, runs ranking, diversity analysis, and qu
 - Node.js 20+
 - Python 3.12+
 - PostgreSQL 16+
-- (Optional) OpenAI API key for live AI
+- (Optional) Gemini API key for live AI
 
 ### Database
 
@@ -201,7 +201,7 @@ npm run dev
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `DATABASE_URL` | `postgresql+asyncpg://...` | Async PostgreSQL connection |
-| `OPENAI_API_KEY` | _(empty)_ | OpenAI key; leave empty for demo mode |
+| `GEMINI_API_KEY` | _(empty)_ | Google Gemini key; leave empty for demo mode |
 | `DEMO_MODE` | `true` | Use mock AI when no API key |
 | `CORS_ORIGINS` | `http://localhost:3000` | Allowed frontend origins |
 | `NEXT_PUBLIC_API_URL` | `http://localhost:8000` | Backend URL for frontend |
@@ -222,7 +222,7 @@ AI_Recruitment_Platform/
 │   │   ├── models/entities.py      # SQLAlchemy models
 │   │   ├── schemas/                # Pydantic models
 │   │   └── services/
-│   │       ├── ai_service.py       # OpenAI + mock AI
+│   │       ├── ai_service.py       # Gemini + mock AI
 │   │       ├── document_parser.py  # PDF/DOCX/TXT extraction
 │   │       ├── ranking_service.py  # Ranking pipeline
 │   │       ├── diversity_service.py# Bias/diversity flags
@@ -306,7 +306,7 @@ python3 -m pytest tests/ -v
 | Frontend | Next.js 15, React 19, TypeScript, Tailwind CSS 4 |
 | Database | PostgreSQL 16 (SQLAlchemy 2 + asyncpg) |
 | Vector Store | ChromaDB |
-| AI | OpenAI `gpt-4o-mini` + `text-embedding-3-small` |
+| AI | Google Gemini `gemini-2.0-flash` + `text-embedding-004` |
 | Documents | PyMuPDF, pdfplumber, python-docx |
 | Reports | ReportLab (PDF) |
 | DevOps | Docker Compose |
@@ -318,7 +318,7 @@ python3 -m pytest tests/ -v
 | Batch Size | Target | Mechanism |
 |------------|--------|-----------|
 | 20 CVs | < 60 seconds | Async background tasks + demo-mode mocks |
-| 100 CVs | < 5 minutes | Same pipeline; live OpenAI adds latency |
+| 100 CVs | < 5 minutes | Same pipeline; live Gemini adds latency |
 
 Progress is polled via `GET /processing/{job_id}`.
 
