@@ -25,6 +25,7 @@ async def test_root(client):
     assert "RecruitIQ" in response.json()["name"]
 
 
+@pytest.mark.integration
 @pytest.mark.asyncio
 async def test_upload_jd_text(client):
     response = await client.post(
@@ -43,6 +44,7 @@ async def test_upload_jd_no_input(client):
     assert response.status_code == 400
 
 
+@pytest.mark.integration
 @pytest.mark.asyncio
 async def test_list_job_descriptions(client):
     response = await client.get("/api/v1/job-descriptions")
@@ -50,6 +52,7 @@ async def test_list_job_descriptions(client):
     assert isinstance(response.json(), list)
 
 
+@pytest.mark.integration
 @pytest.mark.asyncio
 async def test_analytics(client):
     response = await client.get("/api/v1/analytics")
