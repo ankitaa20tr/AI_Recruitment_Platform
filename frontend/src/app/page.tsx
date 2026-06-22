@@ -34,12 +34,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen">
       {/* Hero */}
-      <section className="relative overflow-hidden px-6 py-24">
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute left-1/4 top-0 h-96 w-96 rounded-full bg-accent/20 blur-3xl" />
-          <div className="absolute right-1/4 bottom-0 h-96 w-96 rounded-full bg-gem/10 blur-3xl" />
-        </div>
-
+      <section className="relative px-6 py-24">
         <div className="mx-auto max-w-4xl text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-accent-soft px-4 py-1.5 text-sm font-medium text-accent ring-1 ring-inset ring-accent/25">
@@ -105,11 +100,10 @@ export default function HomePage() {
 
       {/* CTA */}
       <section className="mx-auto max-w-7xl px-6 py-16">
-        <div className="surface relative overflow-hidden p-12 text-center">
-          <div className="pointer-events-none absolute left-1/2 top-0 h-64 w-[36rem] -translate-x-1/2 rounded-full bg-accent/15 blur-3xl" />
-          <BarChart3 className="relative mx-auto h-12 w-12 text-accent" />
-          <h2 className="relative mt-4 text-3xl font-bold text-fg">Ready to transform your hiring?</h2>
-          <p className="relative mx-auto mt-4 max-w-lg text-muted">
+        <div className="surface p-12 text-center">
+          <BarChart3 className="mx-auto h-10 w-10 text-accent" />
+          <h2 className="mt-4 text-3xl font-bold text-fg">Ready to transform your hiring?</h2>
+          <p className="mx-auto mt-4 max-w-lg text-muted">
             Upload a job description and batch of CVs to get AI-powered rankings in minutes.
           </p>
           <Link href="/dashboard" className="mt-8 inline-block">
