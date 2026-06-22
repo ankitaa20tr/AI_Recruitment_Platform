@@ -1,28 +1,124 @@
 @import "tailwindcss";
 
+/* ─────────────────────────────────────────────────────────────
+   RecruitIQ — sleek dark dashboard design system
+   Near-black surfaces · violet accent · hairline borders
+   ───────────────────────────────────────────────────────────── */
 @theme inline {
-  --color-primary: #2563eb;
-  --color-secondary: #0f172a;
-  --color-accent: #14b8a6;
+  /* Surfaces (dark, low-chroma) */
+  --color-bg: #0a0c10;          /* page background */
+  --color-surface: #0f131a;     /* section background */
+  --color-card: #14181f;        /* card background */
+  --color-elevated: #1b212b;    /* hover / raised */
+  --color-line: #232a36;        /* hairline borders */
+  --color-line-strong: #313a49; /* stronger borders */
+
+  /* Text */
+  --color-fg: #e9ecf2;          /* primary text */
+  --color-muted: #99a3b4;       /* secondary text */
+  --color-faint: #646e80;       /* tertiary / labels */
+
+  /* Brand accent (violet) */
+  --color-accent: #7c5cff;
+  --color-accent-hover: #6b4aef;
+  --color-accent-fg: #ffffff;
+  --color-accent-soft: #181430; /* tinted bg for accent chips */
+
+  /* Semantic */
+  --color-success: #34d399;
+  --color-success-soft: #0f2a22;
+  --color-warn: #fbbf24;
+  --color-warn-soft: #2a2310;
+  --color-danger: #f87171;
+  --color-danger-soft: #2a1518;
+  --color-gem: #22d3ee;
+  --color-gem-soft: #0c2630;
+  --color-info: #60a5fa;
+
   --font-sans: var(--font-inter);
+  --font-mono: var(--font-mono), ui-monospace, "SF Mono", Menlo, monospace;
+
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+}
+
+html {
+  color-scheme: dark;
 }
 
 body {
-  background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 50%, #f0fdfa 100%);
+  background:
+    radial-gradient(900px 600px at 85% -10%, rgba(124, 92, 255, 0.10), transparent 60%),
+    radial-gradient(700px 500px at 0% 0%, rgba(34, 211, 238, 0.06), transparent 55%),
+    var(--color-bg);
   min-height: 100vh;
-  color: #0f172a;
+  color: var(--color-fg);
   font-family: var(--font-inter), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
+::selection {
+  background: rgba(124, 92, 255, 0.35);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: #2a323f;
+  border-radius: 8px;
+  border: 2px solid var(--color-bg);
+}
+::-webkit-scrollbar-thumb:hover { background: #3a4453; }
+
+/* ── Reusable helpers ───────────────────────────────────────── */
+
+/* Card surface with hairline border + subtle depth */
+.surface {
+  background: var(--color-card);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-xl);
+}
+
+/* Glassy translucent panel (used by navbar / overlays) */
 .glass {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(16, 19, 26, 0.72);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--color-line);
 }
 
 .gradient-text {
-  background: linear-gradient(135deg, #2563eb, #14b8a6);
+  background: linear-gradient(100deg, #b9a8ff 0%, #7c5cff 45%, #22d3ee 100%);
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
+
+/* Soft accent glow for hero / focal elements */
+.glow-accent {
+  box-shadow: 0 0 0 1px rgba(124, 92, 255, 0.25), 0 18px 60px -20px rgba(124, 92, 255, 0.55);
+}
+
+/* Tabular, monospaced figures for scores/metrics */
+.num {
+  font-family: var(--font-mono), ui-monospace, "SF Mono", Menlo, monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* Thin uppercase label */
+.label {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--color-faint);
+}
+
+/* Subtle fade-in for content */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-up { animation: fade-up 0.5s ease-out both; }
