@@ -66,17 +66,17 @@ export function ProcessingStatus({ jobId, onComplete }: ProcessingStatusProps) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-base">
           {(job.status === "processing" || job.status === "pending") && (
-            <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
+            <Loader2 className="h-4 w-4 animate-spin text-accent" />
           )}
-          {job.status === "completed" && <CheckCircle2 className="h-4 w-4 text-emerald-500" />}
-          {job.status === "failed" && <XCircle className="h-4 w-4 text-red-500" />}
+          {job.status === "completed" && <CheckCircle2 className="h-4 w-4 text-success" />}
+          {job.status === "failed" && <XCircle className="h-4 w-4 text-danger" />}
           Processing Status
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="mb-3 text-sm text-slate-600">{job.message || job.job_type}</p>
+        <p className="mb-3 text-sm text-muted">{job.message || job.job_type}</p>
         <Progress value={pct} className="mb-2" />
-        <p className="text-xs text-slate-400">
+        <p className="num text-xs text-faint">
           {job.total_items > 0
             ? `${job.progress} / ${job.total_items} — ${job.status}`
             : job.status}

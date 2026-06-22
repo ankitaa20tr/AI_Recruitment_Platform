@@ -116,10 +116,10 @@ export default function DashboardPage() {
   return (
     <div className="mx-auto max-w-7xl px-6 py-8">
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-        <h1 className="text-3xl font-bold text-slate-900">Recruiter Dashboard</h1>
-        <p className="mt-1 text-slate-600">Upload, process, and rank candidates with AI</p>
+        <h1 className="text-3xl font-bold text-fg">Recruiter Dashboard</h1>
+        <p className="mt-1 text-muted">Upload, process, and rank candidates with AI</p>
         {!backendConnected && (
-          <p className="mt-2 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+          <p className="mt-2 rounded-lg bg-danger-soft px-3 py-2 text-sm text-danger">
             Cannot reach the backend at {process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}.
             Make sure the backend server is running.
           </p>
@@ -128,10 +128,10 @@ export default function DashboardPage() {
 
       {/* Stats */}
       <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard title="Total CVs" value={analytics?.total_cvs ?? 0} icon={FileIcon} color="bg-blue-600" />
-        <StatCard title="Ranked" value={analytics?.candidates_ranked ?? 0} icon={Users} color="bg-slate-900" />
-        <StatCard title="Hidden Gems" value={analytics?.hidden_gems ?? 0} icon={Gem} color="bg-teal-500" />
-        <StatCard title="Diversity Alerts" value={analytics?.diversity_alerts ?? 0} icon={AlertTriangle} color="bg-amber-500" />
+        <StatCard title="Total CVs" value={analytics?.total_cvs ?? 0} icon={FileIcon} color="bg-accent" />
+        <StatCard title="Ranked" value={analytics?.candidates_ranked ?? 0} icon={Users} color="bg-info" />
+        <StatCard title="Hidden Gems" value={analytics?.hidden_gems ?? 0} icon={Gem} color="bg-gem" />
+        <StatCard title="Diversity Alerts" value={analytics?.diversity_alerts ?? 0} icon={AlertTriangle} color="bg-warn" />
       </div>
 
       {/* JD Selector */}
@@ -144,7 +144,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <select
-              className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+              className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-fg"
               value={activeJDId || ""}
               onChange={(e) => setActiveJDId(e.target.value)}
             >
@@ -161,14 +161,14 @@ export default function DashboardPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <FileText className="h-5 w-5 text-blue-600" /> Job Description
+              <FileText className="h-5 w-5 text-accent" /> Job Description
             </CardTitle>
             <CardDescription>Upload PDF, DOCX, TXT or paste text</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <Input type="file" accept=".pdf,.docx,.txt" onChange={(e) => setJdFile(e.target.files?.[0] || null)} />
             <textarea
-              className="w-full rounded-lg border border-slate-200 p-3 text-sm"
+              className="w-full rounded-lg border border-line bg-surface p-3 text-sm text-fg placeholder:text-faint"
               rows={4}
               placeholder="Or paste job description text..."
               value={jdText}
@@ -184,7 +184,7 @@ export default function DashboardPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Upload className="h-5 w-5 text-teal-500" /> CV Batch Upload
+              <Upload className="h-5 w-5 text-gem" /> CV Batch Upload
             </CardTitle>
             <CardDescription>Upload 20+ CVs (PDF, DOCX, TXT)</CardDescription>
           </CardHeader>
@@ -203,15 +203,15 @@ export default function DashboardPage() {
               <Badge variant="secondary">{cvFiles.length} files selected</Badge>
             )}
             {!activeJDId && (
-              <p className="text-sm text-amber-700">
+              <p className="text-sm text-warn">
                 Step 1: Upload or select a job description before uploading resumes.
               </p>
             )}
             {uploadError && (
-              <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{uploadError}</p>
+              <p className="rounded-lg bg-danger-soft px-3 py-2 text-sm text-danger">{uploadError}</p>
             )}
             {uploadSuccess && (
-              <p className="rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700">{uploadSuccess}</p>
+              <p className="rounded-lg bg-success-soft px-3 py-2 text-sm text-success">{uploadSuccess}</p>
             )}
             <Button onClick={handleUploadCVs} disabled={!activeJDId || cvFiles.length === 0 || loading === "cvs"}>
               {loading === "cvs" ? "Uploading..." : cvFiles.length > 0 ? `Upload ${cvFiles.length} CVs` : "Upload CVs"}
@@ -272,18 +272,18 @@ export default function DashboardPage() {
           <CardContent>
             <div className="grid gap-4 md:grid-cols-2">
               <div>
-                <h4 className="font-medium text-slate-900">Primary Recommendations</h4>
+                <h4 className="font-medium text-fg">Primary Recommendations</h4>
                 <ul className="mt-2 space-y-2">
                   {(recommendation.primary_recommendations as { name: string; score: number; rationale: string }[])?.map((r, i) => (
-                    <li key={i} className="rounded-lg bg-blue-50 p-3 text-sm">
-                      <strong>{r.name}</strong> — {formatScore(r.score)}% — {r.rationale}
+                    <li key={i} className="rounded-lg bg-accent-soft p-3 text-sm text-fg ring-1 ring-inset ring-accent/25">
+                      <strong>{r.name}</strong> — <span className="num text-fg">{formatScore(r.score)}%</span> — {r.rationale}
                     </li>
                   ))}
                 </ul>
               </div>
               <div>
-                <h4 className="font-medium text-slate-900">Next Steps</h4>
-                <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-600">
+                <h4 className="font-medium text-fg">Next Steps</h4>
+                <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-muted">
                   {(recommendation.next_steps as string[])?.map((s, i) => (
                     <li key={i}>{s}</li>
                   ))}
@@ -299,17 +299,17 @@ export default function DashboardPage() {
         <CardHeader>
           <CardTitle>Top Ranked Candidates</CardTitle>
           <CardDescription>
-            <Link href="/candidates" className="text-blue-600 hover:underline">View all candidates →</Link>
+            <Link href="/candidates" className="text-accent hover:underline">View all candidates →</Link>
           </CardDescription>
         </CardHeader>
         <CardContent>
           {candidates.length === 0 ? (
-            <p className="text-sm text-slate-500">Upload CVs and run ranking to see results.</p>
+            <p className="text-sm text-muted">Upload CVs and run ranking to see results.</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b text-left text-slate-500">
+                  <tr className="border-b border-line text-left text-faint">
                     <th className="pb-3 pr-4">Rank</th>
                     <th className="pb-3 pr-4">Name</th>
                     <th className="pb-3 pr-4">Score</th>
@@ -319,19 +319,19 @@ export default function DashboardPage() {
                 </thead>
                 <tbody>
                   {candidates.map((c) => (
-                    <tr key={c.id} className="border-b border-slate-100">
-                      <td className="py-3 pr-4 font-medium">#{c.rank ?? "-"}</td>
+                    <tr key={c.id} className="border-b border-line text-fg">
+                      <td className="num py-3 pr-4 font-medium text-fg">#{c.rank ?? "-"}</td>
                       <td className="py-3 pr-4">
-                        <Link href={`/candidates/${c.id}`} className="text-blue-600 hover:underline">
+                        <Link href={`/candidates/${c.id}`} className="text-accent hover:underline">
                           {c.name}
                         </Link>
                         {c.is_hidden_gem && <Badge variant="gem" className="ml-2">Gem</Badge>}
                       </td>
-                      <td className={`py-3 pr-4 font-semibold ${getScoreColor(c.overall_score)}`}>
+                      <td className={`num py-3 pr-4 font-semibold ${getScoreColor(c.overall_score)}`}>
                         {formatScore(c.overall_score)}
                       </td>
-                      <td className="py-3 pr-4">{c.years_of_experience}y</td>
-                      <td className="py-3">{c.top_skills.slice(0, 3).join(", ")}</td>
+                      <td className="num py-3 pr-4 text-muted">{c.years_of_experience}y</td>
+                      <td className="py-3 text-muted">{c.top_skills.slice(0, 3).join(", ")}</td>
                     </tr>
                   ))}
                 </tbody>

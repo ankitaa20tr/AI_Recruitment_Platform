@@ -54,10 +54,10 @@ export default function CandidatesPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-8">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between animate-fade-up">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Candidates</h1>
-          <p className="mt-1 text-slate-600">{total} candidates in pool</p>
+          <h1 className="text-3xl font-bold text-fg">Candidates</h1>
+          <p className="mt-1 text-muted">{total} candidates in pool</p>
         </div>
         <div className="flex gap-2">
           <a href={api.exportCSV(activeJDId || undefined)}>
@@ -78,7 +78,7 @@ export default function CandidatesPage() {
           <div className="flex flex-col gap-4">
             <div className="flex flex-wrap items-center gap-4">
               <div className="relative flex-1 min-w-[200px]">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-faint" />
                 <Input
                   className="pl-10"
                   placeholder="Search by name or email..."
@@ -87,7 +87,7 @@ export default function CandidatesPage() {
                 />
               </div>
               <select
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm bg-white"
+                className="rounded-lg border border-line bg-surface px-3 py-2 text-sm text-fg focus:outline-none focus:ring-1 focus:ring-accent"
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
               >
@@ -105,9 +105,9 @@ export default function CandidatesPage() {
               </Button>
             </div>
             
-            <div className="flex flex-wrap items-center gap-4 border-t pt-4 border-slate-100">
+            <div className="flex flex-wrap items-center gap-4 border-t pt-4 border-line">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-medium text-slate-500">Min Score:</span>
+                <span className="label text-faint">Min Score:</span>
                 <Input
                   className="w-24"
                   type="number"
@@ -120,7 +120,7 @@ export default function CandidatesPage() {
               </div>
 
               <div className="flex items-center gap-2">
-                <span className="text-xs font-medium text-slate-500">Min Exp (Yrs):</span>
+                <span className="label text-faint">Min Exp (Yrs):</span>
                 <Input
                   className="w-24"
                   type="number"
@@ -133,7 +133,7 @@ export default function CandidatesPage() {
               </div>
 
               <div className="flex items-center gap-2">
-                <span className="text-xs font-medium text-slate-500">Max Exp (Yrs):</span>
+                <span className="label text-faint">Max Exp (Yrs):</span>
                 <Input
                   className="w-24"
                   type="number"
@@ -146,7 +146,7 @@ export default function CandidatesPage() {
               </div>
 
               <div className="flex items-center gap-2 flex-1 min-w-[200px]">
-                <span className="text-xs font-medium text-slate-500">Skills:</span>
+                <span className="label text-faint">Skills:</span>
                 <Input
                   className="flex-1"
                   placeholder="e.g. Python, React, FastAPI (comma separated)"
@@ -161,29 +161,33 @@ export default function CandidatesPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b text-left text-slate-500">
-                  <th className="pb-3 pr-4">Rank</th>
-                  <th className="pb-3 pr-4">Name</th>
-                  <th className="pb-3 pr-4">Score</th>
-                  <th className="pb-3 pr-4">Experience</th>
-                  <th className="pb-3 pr-4">Top Skills</th>
-                  <th className="pb-3">Status</th>
+                <tr className="border-b border-line text-left">
+                  <th className="label pb-3 pr-4 text-faint">Rank</th>
+                  <th className="label pb-3 pr-4 text-faint">Name</th>
+                  <th className="label pb-3 pr-4 text-faint">Score</th>
+                  <th className="label pb-3 pr-4 text-faint">Experience</th>
+                  <th className="label pb-3 pr-4 text-faint">Top Skills</th>
+                  <th className="label pb-3 text-faint">Status</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-line">
                 {candidates.map((c) => (
-                  <tr key={c.id} className="border-b border-slate-100 hover:bg-slate-50/50">
-                    <td className="py-3 pr-4 font-medium">#{c.rank ?? "-"}</td>
+                  <tr key={c.id} className="hover:bg-elevated transition-colors">
+                    <td className="num py-3 pr-4 font-medium text-fg">#{c.rank ?? "-"}</td>
                     <td className="py-3 pr-4">
-                      <Link href={`/candidates/${c.id}`} className="font-medium text-blue-600 hover:underline">
+                      <Link href={`/candidates/${c.id}`} className="font-medium text-accent hover:underline">
                         {c.name}
                       </Link>
-                      {c.is_hidden_gem && <Badge variant="gem" className="ml-2">Gem</Badge>}
+                      {c.is_hidden_gem && (
+                        <Badge variant="gem" className="ml-2">
+                          <Gem className="h-3 w-3 mr-1" /> Gem
+                        </Badge>
+                      )}
                     </td>
-                    <td className={`py-3 pr-4 font-semibold ${getScoreColor(c.overall_score)}`}>
+                    <td className={`num py-3 pr-4 font-semibold ${getScoreColor(c.overall_score)}`}>
                       {formatScore(c.overall_score)}
                     </td>
-                    <td className="py-3 pr-4">{c.years_of_experience} years</td>
+                    <td className="num py-3 pr-4 text-muted">{c.years_of_experience} years</td>
                     <td className="py-3 pr-4">
                       <div className="flex flex-wrap gap-1">
                         {c.top_skills.slice(0, 4).map((s) => (
@@ -202,7 +206,7 @@ export default function CandidatesPage() {
 
           {totalPages > 1 && (
             <div className="mt-4 flex items-center justify-between">
-              <p className="text-sm text-slate-500">Page {page} of {totalPages}</p>
+              <p className="text-sm text-muted">Page <span className="num">{page}</span> of <span className="num">{totalPages}</span></p>
               <div className="flex gap-2">
                 <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage(page - 1)}>
                   <ChevronLeft className="h-4 w-4" />

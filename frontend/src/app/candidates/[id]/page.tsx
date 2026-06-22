@@ -53,7 +53,7 @@ export default function CandidateProfilePage() {
   if (!candidate) {
     return (
       <div className="flex min-h-[50vh] items-center justify-center">
-        <p className="text-slate-500">Loading candidate profile...</p>
+        <p className="text-muted">Loading candidate profile...</p>
       </div>
     );
   }
@@ -70,7 +70,7 @@ export default function CandidateProfilePage() {
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-8">
-      <Link href="/candidates" className="mb-4 inline-flex items-center gap-1 text-sm text-blue-600 hover:underline">
+      <Link href="/candidates" className="mb-4 inline-flex items-center gap-1 text-sm text-accent hover:text-accent-hover hover:underline">
         <ArrowLeft className="h-4 w-4" /> Back to candidates
       </Link>
 
@@ -78,11 +78,11 @@ export default function CandidateProfilePage() {
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-bold text-slate-900">{candidate.name}</h1>
+              <h1 className="text-3xl font-bold text-fg">{candidate.name}</h1>
               {candidate.is_hidden_gem && <Badge variant="gem"><Gem className="mr-1 h-3 w-3" /> Hidden Gem</Badge>}
               {candidate.rank && <Badge variant="default">Rank #{candidate.rank}</Badge>}
             </div>
-            <p className="mt-1 text-slate-600">
+            <p className="mt-1 text-muted">
               {candidate.email} {candidate.location && `• ${candidate.location}`}
             </p>
           </div>
@@ -107,17 +107,17 @@ export default function CandidateProfilePage() {
           <CardContent>
             {candidate.scores && (
               <>
-                <p className={`text-4xl font-bold ${getScoreColor(candidate.scores.overall_score)}`}>
+                <p className={`num text-4xl font-bold ${getScoreColor(candidate.scores.overall_score)}`}>
                   {formatScore(candidate.scores.overall_score)}%
                 </p>
-                <p className="text-sm text-slate-500">Overall Match Score</p>
+                <p className="label text-faint">Overall Match Score</p>
                 <div className="mt-6 h-64">
                   <ResponsiveContainer width="100%" height="100%">
                     <RadarChart data={radarData}>
-                      <PolarGrid />
-                      <PolarAngleAxis dataKey="subject" tick={{ fontSize: 11 }} />
-                      <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fontSize: 10 }} />
-                      <Radar dataKey="value" stroke="#2563EB" fill="#2563EB" fillOpacity={0.3} />
+                      <PolarGrid stroke="#232a36" />
+                      <PolarAngleAxis dataKey="subject" tick={{ fontSize: 11, fill: "#646e80" }} />
+                      <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fontSize: 10, fill: "#646e80" }} />
+                      <Radar dataKey="value" stroke="#7c5cff" fill="#7c5cff" fillOpacity={0.3} />
                     </RadarChart>
                   </ResponsiveContainer>
                 </div>
@@ -133,18 +133,18 @@ export default function CandidateProfilePage() {
           </CardHeader>
           <CardContent>
             {candidate.executive_summary && (
-              <p className="mb-6 rounded-lg bg-blue-50 p-4 text-sm text-slate-700">{candidate.executive_summary}</p>
+              <p className="mb-6 rounded-xl bg-accent-soft p-4 text-sm text-fg ring-1 ring-inset ring-accent/25">{candidate.executive_summary}</p>
             )}
             <div className="grid gap-6 md:grid-cols-2">
               {[
-                { title: "Strengths", items: candidate.explanation?.strengths, color: "text-emerald-600" },
-                { title: "Gaps", items: candidate.explanation?.gaps, color: "text-amber-600" },
-                { title: "Risks", items: candidate.explanation?.risks, color: "text-red-600" },
-                { title: "Potential", items: candidate.explanation?.potential, color: "text-teal-600" },
-              ].map(({ title, items, color }) => (
-                <div key={title}>
+                { title: "Strengths", items: candidate.explanation?.strengths, color: "text-success", bg: "bg-success-soft" },
+                { title: "Gaps", items: candidate.explanation?.gaps, color: "text-warn", bg: "bg-warn-soft" },
+                { title: "Risks", items: candidate.explanation?.risks, color: "text-danger", bg: "bg-danger-soft" },
+                { title: "Potential", items: candidate.explanation?.potential, color: "text-gem", bg: "bg-gem-soft" },
+              ].map(({ title, items, color, bg }) => (
+                <div key={title} className={`rounded-xl ${bg} p-4`}>
                   <h4 className={`font-semibold ${color}`}>{title}</h4>
-                  <ul className="mt-2 space-y-1 text-sm text-slate-600">
+                  <ul className="mt-2 space-y-1 text-sm text-muted">
                     {items?.map((item, i) => <li key={i}>• {item}</li>) || <li>—</li>}
                   </ul>
                 </div>
@@ -172,13 +172,13 @@ export default function CandidateProfilePage() {
               {((candidate.parsed_data?.education as { institution?: string; degree?: string; year?: string }[]) || []).length > 0 ? (
                 (candidate.parsed_data.education as { institution?: string; degree?: string; year?: string }[]).map((edu, i) => (
                   <div key={i}>
-                    <p className="font-medium text-slate-900">{edu.degree || "Degree"}</p>
-                    <p className="text-sm text-slate-600">{edu.institution}</p>
-                    {edu.year && <p className="text-xs text-slate-400">{edu.year}</p>}
+                    <p className="font-medium text-fg">{edu.degree || "Degree"}</p>
+                    <p className="text-sm text-muted">{edu.institution}</p>
+                    {edu.year && <p className="text-xs text-faint">{edu.year}</p>}
                   </div>
                 ))
               ) : (
-                <p className="text-sm text-slate-500">No education data extracted.</p>
+                <p className="text-sm text-muted">No education data extracted.</p>
               )}
             </div>
           </CardContent>
@@ -190,13 +190,13 @@ export default function CandidateProfilePage() {
             <div className="space-y-3">
               {((candidate.parsed_data?.projects as { name?: string; description?: string }[]) || []).length > 0 ? (
                 (candidate.parsed_data.projects as { name?: string; description?: string }[]).map((proj, i) => (
-                  <div key={i} className="rounded-lg bg-slate-50 p-3">
-                    <p className="font-medium text-slate-900">{proj.name}</p>
-                    {proj.description && <p className="mt-1 text-sm text-slate-600">{proj.description}</p>}
+                  <div key={i} className="rounded-xl bg-elevated p-3">
+                    <p className="font-medium text-fg">{proj.name}</p>
+                    {proj.description && <p className="mt-1 text-sm text-muted">{proj.description}</p>}
                   </div>
                 ))
               ) : (
-                <p className="text-sm text-slate-500">No projects listed.</p>
+                <p className="text-sm text-muted">No projects listed.</p>
               )}
             </div>
           </CardContent>
@@ -208,10 +208,10 @@ export default function CandidateProfilePage() {
         <CardContent>
           <div className="space-y-4">
             {candidate.experiences.map((exp, i) => (
-              <div key={i} className="border-l-2 border-blue-200 pl-4">
-                <p className="font-medium text-slate-900">{exp.role}</p>
-                <p className="text-sm text-slate-600">{exp.company}</p>
-                <p className="text-xs text-slate-400">{exp.start} — {exp.end || "Present"}</p>
+              <div key={i} className="border-l-2 border-accent pl-4">
+                <p className="font-medium text-fg">{exp.role}</p>
+                <p className="text-sm text-muted">{exp.company}</p>
+                <p className="text-xs text-faint">{exp.start} — {exp.end || "Present"}</p>
               </div>
             ))}
           </div>
@@ -223,13 +223,13 @@ export default function CandidateProfilePage() {
         <CardHeader><CardTitle>Interview Questions</CardTitle></CardHeader>
         <CardContent>
           {candidate.interview_questions.length === 0 ? (
-            <p className="text-sm text-slate-500">Click &quot;Generate Questions&quot; to create personalized interview questions.</p>
+            <p className="text-sm text-muted">Click &quot;Generate Questions&quot; to create personalized interview questions.</p>
           ) : (
             <div className="space-y-4">
               {candidate.interview_questions.map((q, i) => (
-                <div key={i} className="rounded-lg border border-slate-100 p-4">
-                  <Badge variant="outline" className="mb-2">{q.category}</Badge>
-                  <p className="text-sm text-slate-700">{q.question}</p>
+                <div key={i} className="rounded-xl border border-line bg-elevated p-4">
+                  <Badge variant="secondary" className="mb-2">{q.category}</Badge>
+                  <p className="text-sm text-fg">{q.question}</p>
                 </div>
               ))}
             </div>

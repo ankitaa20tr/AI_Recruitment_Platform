@@ -56,13 +56,13 @@ export default function ComparePage() {
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-8">
-      <h1 className="text-3xl font-bold text-slate-900">Candidate Comparison</h1>
-      <p className="mt-1 text-slate-600">Select 2–4 candidates to compare side-by-side</p>
+      <h1 className="text-3xl font-bold text-fg">Candidate Comparison</h1>
+      <p className="mt-1 text-muted">Select 2–4 candidates to compare side-by-side</p>
 
       <Card className="mt-6">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <GitCompare className="h-5 w-5 text-blue-600" /> Select Candidates
+            <GitCompare className="h-5 w-5 text-accent" /> Select Candidates
           </CardTitle>
           <CardDescription>Choose from your ranked pool ({selected.length}/4 selected)</CardDescription>
         </CardHeader>
@@ -74,12 +74,12 @@ export default function ComparePage() {
                 onClick={() => toggleSelect(c.id)}
                 className={`rounded-lg border px-3 py-2 text-sm transition-colors ${
                   selected.includes(c.id)
-                    ? "border-blue-600 bg-blue-50 text-blue-700"
-                    : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
+                    ? "border-accent bg-accent-soft text-accent ring-1 ring-inset ring-accent/25"
+                    : "border-line bg-surface text-muted hover:bg-elevated"
                 }`}
               >
                 #{c.rank ?? "-"} {c.name}
-                {c.is_hidden_gem && <Gem className="ml-1 inline h-3 w-3 text-purple-500" />}
+                {c.is_hidden_gem && <Gem className="ml-1 inline h-3 w-3 text-gem" />}
               </button>
             ))}
           </div>
@@ -97,14 +97,14 @@ export default function ComparePage() {
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={chartData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                    <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-                    <YAxis domain={[0, 100]} tick={{ fontSize: 12 }} />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="Overall" fill="#2563EB" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="Skills" fill="#14B8A6" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="Experience" fill="#0F172A" radius={[4, 4, 0, 0]} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#232a36" />
+                    <XAxis dataKey="name" tick={{ fontSize: 12, fill: "#646e80" }} />
+                    <YAxis domain={[0, 100]} tick={{ fontSize: 12, fill: "#646e80" }} />
+                    <Tooltip contentStyle={{ background: "#14181f", border: "1px solid #232a36", borderRadius: "10px", color: "#e9ecf2" }} />
+                    <Legend wrapperStyle={{ color: "#99a3b4" }} />
+                    <Bar dataKey="Overall" fill="#7c5cff" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="Skills" fill="#22d3ee" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="Experience" fill="#34d399" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -115,15 +115,15 @@ export default function ComparePage() {
               <CardContent>
                 <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${comparison.length}, 1fr)` }}>
                   {comparison.map((c) => (
-                    <div key={c.id} className="rounded-lg border border-slate-100 p-4">
-                      <Link href={`/candidates/${c.id}`} className="font-semibold text-blue-600 hover:underline">
+                    <div key={c.id} className="rounded-lg border border-line bg-elevated p-4">
+                      <Link href={`/candidates/${c.id}`} className="font-semibold text-accent hover:underline">
                         {c.name}
                       </Link>
                       {c.is_hidden_gem && <Badge variant="gem" className="ml-2">Gem</Badge>}
-                      <p className={`mt-2 text-2xl font-bold ${getScoreColor(c.scores?.overall ?? 0)}`}>
+                      <p className={`num mt-2 text-2xl font-bold ${getScoreColor(c.scores?.overall ?? 0)}`}>
                         {formatScore(c.scores?.overall ?? 0)}%
                       </p>
-                      <p className="text-xs text-slate-500">Rank #{c.rank ?? "-"} • {c.years_of_experience}y exp</p>
+                      <p className="text-xs text-faint">Rank #{c.rank ?? "-"} • {c.years_of_experience}y exp</p>
                       <div className="mt-3 flex flex-wrap gap-1">
                         {c.skills.slice(0, 6).map((s) => (
                           <Badge key={s} variant="secondary">{s}</Badge>

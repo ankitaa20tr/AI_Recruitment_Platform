@@ -32,7 +32,7 @@ export function ParsedJDPreview({ jd }: { jd: JobDescription | null }) {
 
         {hardSkills.length > 0 && (
           <div>
-            <p className="mb-1 font-medium text-slate-700">Hard Skills</p>
+            <p className="mb-1 font-medium text-muted">Hard Skills</p>
             <div className="flex flex-wrap gap-1">
               {hardSkills.map((s) => (
                 <Badge key={s} variant="secondary">{s}</Badge>
@@ -43,7 +43,7 @@ export function ParsedJDPreview({ jd }: { jd: JobDescription | null }) {
 
         {softSkills.length > 0 && (
           <div>
-            <p className="mb-1 font-medium text-slate-700">Soft Skills</p>
+            <p className="mb-1 font-medium text-muted">Soft Skills</p>
             <div className="flex flex-wrap gap-1">
               {softSkills.map((s) => (
                 <Badge key={s} variant="secondary">{s}</Badge>
@@ -54,8 +54,8 @@ export function ParsedJDPreview({ jd }: { jd: JobDescription | null }) {
 
         {mustHave.length > 0 && (
           <div>
-            <p className="mb-1 font-medium text-slate-700">Must Have</p>
-            <ul className="list-disc space-y-0.5 pl-5 text-slate-600">
+            <p className="mb-1 font-medium text-muted">Must Have</p>
+            <ul className="list-disc space-y-0.5 pl-5 text-muted">
               {mustHave.map((item) => <li key={item}>{item}</li>)}
             </ul>
           </div>
@@ -63,8 +63,8 @@ export function ParsedJDPreview({ jd }: { jd: JobDescription | null }) {
 
         {niceToHave.length > 0 && (
           <div>
-            <p className="mb-1 font-medium text-slate-700">Nice to Have</p>
-            <ul className="list-disc space-y-0.5 pl-5 text-slate-600">
+            <p className="mb-1 font-medium text-muted">Nice to Have</p>
+            <ul className="list-disc space-y-0.5 pl-5 text-muted">
               {niceToHave.map((item) => <li key={item}>{item}</li>)}
             </ul>
           </div>
@@ -72,7 +72,7 @@ export function ParsedJDPreview({ jd }: { jd: JobDescription | null }) {
 
         {domain.length > 0 && (
           <div>
-            <p className="mb-1 font-medium text-slate-700">Domain Knowledge</p>
+            <p className="mb-1 font-medium text-muted">Domain Knowledge</p>
             <div className="flex flex-wrap gap-1">
               {domain.map((d) => (
                 <Badge key={d} variant="secondary">{d}</Badge>

@@ -51,16 +51,16 @@ export default function CopilotPage() {
   };
 
   return (
-    <div className="mx-auto max-w-4xl px-6 py-8">
-      <h1 className="text-3xl font-bold text-slate-900">Recruiter Copilot</h1>
-      <p className="mt-1 text-slate-600">AI-powered chat over your candidate data</p>
+    <div className="mx-auto max-w-4xl px-6 py-8 animate-fade-up">
+      <h1 className="text-3xl font-bold text-fg">Recruiter Copilot</h1>
+      <p className="mt-1 text-muted">AI-powered chat over your candidate data</p>
 
       <Card className="mt-6">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Bot className="h-5 w-5 text-blue-600" /> Chat
+          <CardTitle className="flex items-center gap-2 text-fg">
+            <Bot className="h-5 w-5 text-accent" /> Chat
           </CardTitle>
-          <CardDescription>RAG-powered assistant for recruitment decisions</CardDescription>
+          <CardDescription className="text-muted">RAG-powered assistant for recruitment decisions</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="mb-4 flex flex-wrap gap-2">
@@ -68,50 +68,50 @@ export default function CopilotPage() {
               <button
                 key={s}
                 onClick={() => sendMessage(s)}
-                className="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-600 transition-colors hover:bg-blue-50 hover:text-blue-600"
+                className="rounded-full border border-line bg-surface px-3 py-1 text-xs text-muted transition-colors hover:border-accent/50 hover:text-fg"
               >
                 {s}
               </button>
             ))}
           </div>
 
-          <div className="h-[400px] overflow-y-auto rounded-lg border border-slate-100 p-4">
+          <div className="h-[400px] overflow-y-auto rounded-2xl border border-line bg-bg p-4">
             {messages.map((msg, i) => (
               <div key={i} className={`mb-4 flex gap-3 ${msg.role === "user" ? "justify-end" : ""}`}>
                 {msg.role === "assistant" && (
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100">
-                    <Bot className="h-4 w-4 text-blue-600" />
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent-soft">
+                    <Bot className="h-4 w-4 text-accent" />
                   </div>
                 )}
                 <div
-                  className={`max-w-[80%] rounded-lg px-4 py-2 text-sm ${
+                  className={`max-w-[80%] rounded-2xl px-4 py-2 text-sm ${
                     msg.role === "user"
-                      ? "bg-blue-600 text-white"
-                      : "bg-slate-50 text-slate-700"
+                      ? "bg-accent text-accent-fg"
+                      : "border border-line bg-elevated text-fg"
                   }`}
                 >
                   {msg.content}
                 </div>
                 {msg.role === "user" && (
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-200">
-                    <User className="h-4 w-4 text-slate-600" />
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent-soft">
+                    <User className="h-4 w-4 text-accent" />
                   </div>
                 )}
               </div>
             ))}
             {loading && (
               <div className="flex gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100">
-                  <Bot className="h-4 w-4 animate-pulse text-blue-600" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-soft">
+                  <Bot className="h-4 w-4 animate-pulse text-accent" />
                 </div>
-                <div className="rounded-lg bg-slate-50 px-4 py-2 text-sm text-slate-400">Thinking...</div>
+                <div className="rounded-2xl border border-line bg-elevated px-4 py-2 text-sm text-faint">Thinking...</div>
               </div>
             )}
             <div ref={bottomRef} />
           </div>
 
           <form
-            className="mt-4 flex gap-2"
+            className="mt-4 flex gap-2 rounded-2xl border border-line bg-card p-2"
             onSubmit={(e) => { e.preventDefault(); sendMessage(input); }}
           >
             <Input
