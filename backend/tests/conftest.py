@@ -1,8 +1,9 @@
+import os
 import pytest
 
-
-def pytest_configure(config):
-    config.addinivalue_line("markers", "integration: marks tests requiring PostgreSQL")
+# Force offline heuristic mode so tests are deterministic and never hit the API.
+os.environ["DEMO_MODE"] = "true"
+os.environ["GEMINI_API_KEY"] = ""
 
 
 @pytest.fixture(scope="session")

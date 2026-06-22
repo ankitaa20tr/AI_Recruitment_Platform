@@ -1,28 +1,120 @@
 @import "tailwindcss";
 
+/* ─────────────────────────────────────────────────────────────
+   RecruitIQ — calm dark UI
+   Warm charcoal surfaces · restrained indigo accent · hairline
+   borders · no glow, no gradients. Quiet and professional.
+   ───────────────────────────────────────────────────────────── */
 @theme inline {
-  --color-primary: #2563eb;
-  --color-secondary: #0f172a;
-  --color-accent: #14b8a6;
+  /* Surfaces — warm, neutral charcoal (not pure black) */
+  --color-bg: #131418;
+  --color-surface: #16181d;
+  --color-card: #1a1c22;
+  --color-elevated: #21242b;
+  --color-line: #292c34;
+  --color-line-strong: #383c46;
+
+  /* Text */
+  --color-fg: #e7e8ec;
+  --color-muted: #a0a3ad;
+  --color-faint: #6c707b;
+
+  /* Accent — muted indigo, used sparingly */
+  --color-accent: #5b73e8;
+  --color-accent-hover: #4d63d4;
+  --color-accent-fg: #ffffff;
+  --color-accent-soft: #1c2030;
+
+  /* Semantic — slightly desaturated so nothing screams */
+  --color-success: #46b888;
+  --color-success-soft: #14241e;
+  --color-warn: #d3a23f;
+  --color-warn-soft: #261f12;
+  --color-danger: #e0635e;
+  --color-danger-soft: #271619;
+  --color-gem: #3cb4c2;
+  --color-gem-soft: #102327;
+  --color-info: #5b86d6;
+
   --font-sans: var(--font-inter);
+  --font-mono: var(--font-mono), ui-monospace, "SF Mono", Menlo, monospace;
+
+  --radius-lg: 10px;
+  --radius-xl: 14px;
+}
+
+html {
+  color-scheme: dark;
 }
 
 body {
-  background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 50%, #f0fdfa 100%);
+  background: var(--color-bg);
   min-height: 100vh;
-  color: #0f172a;
+  color: var(--color-fg);
   font-family: var(--font-inter), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
+::selection {
+  background: rgba(91, 115, 232, 0.3);
+}
+
+/* Custom scrollbar — quiet */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: #2f333c;
+  border-radius: 8px;
+  border: 2px solid var(--color-bg);
+}
+::-webkit-scrollbar-thumb:hover { background: #3a3f4a; }
+
+/* ── Reusable helpers ───────────────────────────────────────── */
+
+/* Card surface: hairline border + gentle depth */
+.surface {
+  background: var(--color-card);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-xl);
+}
+
+/* Translucent panel for the sticky header */
 .glass {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: color-mix(in srgb, var(--color-bg) 82%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--color-line);
 }
 
+/* Was a rainbow gradient — now a single calm accent tint */
 .gradient-text {
-  background: linear-gradient(135deg, #2563eb, #14b8a6);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--color-accent);
 }
+
+/* Kept for class compatibility — intentionally just a soft, neutral
+   shadow now (no colored glow). */
+.glow-accent {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+/* Tabular, monospaced figures for scores/metrics */
+.num {
+  font-family: var(--font-mono), ui-monospace, "SF Mono", Menlo, monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* Thin uppercase micro-label */
+.label {
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--color-faint);
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-up { animation: fade-up 0.45s ease-out both; }
