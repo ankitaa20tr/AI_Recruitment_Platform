@@ -13,11 +13,36 @@
 # Python
 __pycache__/
 *.py[cod]
+*$py.class
 .venv/
 venv/
 env/
-*.egg-info/
+<<<<<<< HEAD
+=======
+.pnp
+.pnp.*
 
+# Environment / secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+*.p12
+secrets.*
+
+# Build output
+.next/
+out/
+dist/
+build/
+>>>>>>> 5bbffe2598240d8be1bfb285e19863979e6036b8
+*.egg-info/
+*.tsbuildinfo
+next-env.d.ts
+
+<<<<<<< HEAD
 # testing
 /coverage
 .coverage
@@ -56,10 +81,42 @@ yarn-error.log*
 next-env.d.ts
 
 # data
+=======
+# Data (runtime-generated, must not be committed)
+>>>>>>> 5bbffe2598240d8be1bfb285e19863979e6036b8
 uploads/
 chroma_data/
 *.db
+*.sqlite
+*.sqlite3
 
-# IDE
+# Python tooling caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage/
+htmlcov/
+
+# IDE / editor
 .idea/
 .vscode/
+<<<<<<< HEAD
+=======
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Deploy platforms
+.vercel
+>>>>>>> 5bbffe2598240d8be1bfb285e19863979e6036b8

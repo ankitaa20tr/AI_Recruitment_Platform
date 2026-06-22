@@ -1,4 +1,4 @@
-# Assignment 5: AI-Augmented Recruitment Platform
+# RecruitIQ — AI-Augmented Recruitment Platform
 
 **Screen 1,000 CVs. Surface the 10 who matter. Explain why.**
 
@@ -8,12 +8,16 @@
 
 ---
 
-## Problem Statement
+## Problem
 
-Recruiters are drowning in volume. ATS keyword matching is brittle — it rejects great candidates and passes keyword-stuffed CVs. This platform goes **beyond keyword matching** to semantic understanding of fit, and explains ranking decisions transparently.
+Recruiters are drowning in volume. ATS keyword matching is brittle — it rejects great
+candidates and waves through keyword-stuffed CVs. RecruitIQ goes **beyond keyword matching**
+to semantic understanding of fit, ranks candidates with a transparent score breakdown,
+explains every decision, flags bias, and writes tailored interview questions.
 
----
+## What it does
 
+<<<<<<< HEAD
 ## What You're Building
 
 A recruitment augmentation platform (**RecruitIQ AI**) with:
@@ -50,6 +54,20 @@ Overall Score =
 ```
 
 Embeddings use OpenAI `text-embedding-3-small` (or deterministic mock embeddings in demo mode). Domain scoring uses **vector similarity** — not raw keyword counts.
+=======
+- **JD parsing** — extracts role, seniority, required experience, hard/soft skills,
+  must-have vs nice-to-have, domain knowledge, and education from any JD format.
+- **CV batch ingestion** — PDF / DOCX / TXT, parsed into structured profiles
+  (skills, experience, education, projects, achievements).
+- **Semantic ranking** — embedding similarity + interpretable sub-scores, not keyword counts.
+- **Explainable rankings** — per-candidate summary, strengths, gaps, risk flags, and a
+  hire recommendation.
+- **Bias & diversity flags** — detects a homogeneous shortlist and surfaces qualified
+  "hidden gem" candidates with non-traditional backgrounds.
+- **Tailored interview questions** — reference each candidate's actual projects, skills, and gaps.
+- **Recruiter Copilot** — chat over the candidate pool.
+- **Exports** — CSV shortlist + per-candidate PDF.
+>>>>>>> 5bbffe2598240d8be1bfb285e19863979e6036b8
 
 ---
 
@@ -67,47 +85,54 @@ Embeddings use OpenAI `text-embedding-3-small` (or deterministic mock embeddings
 
 ## Architecture
 
-```mermaid
-flowchart LR
-    subgraph ingest [Ingestion]
-        JD[Job Description]
-        CVs[CV Batch Upload]
-    end
+```
+Next.js 15 (App Router, Tailwind 4)            FastAPI (async, in-memory store)
+┌──────────────────────────────┐              ┌─────────────────────────────────────┐
+│ Setup → Processing → Results  │   REST/JSON  │ /api/jd          parse JD             │
+│  • JD input + CV dropzone     │ ───────────▶ │ /api/screen      batch screen (async) │
+│  • live progress              │              │ /api/jobs/{id}   progress             │
+│  • ranked list + score rings  │ ◀─────────── │ /api/results/{id}                     │
+│  • candidate drawer           │              │ /api/candidates/{id}                  │
+│  • diversity panel + copilot  │              │ /api/chat /compare /export            │
+└──────────────────────────────┘              └─────────────────────────────────────┘
+                                                          │
+                                            ┌─────────────┴───────────────┐
+                                            │ Google Gemini               │
+                                            │  • 2.5-flash-lite (parse,    │
+                                            │    explain, questions, chat) │
+                                            │  • embedding-001 (ranking)   │
+                                            │  • heuristic fallback engine │
+                                            └──────────────────────────────┘
+```
 
-    subgraph parse [Parsing]
-        DocParser[Document Parser\nPDF / DOCX / TXT]
-        AIParse[AI Parser\nOpenAI or Demo Mock]
-    end
+No database — everything lives in memory for the process lifetime (resets on restart),
+which is all the assignment needs.
 
-    subgraph score [Ranking]
-        Embed[Embeddings]
-        Chroma[ChromaDB Vectors]
-        Score[Weighted Scoring]
-        Explain[Explainability]
-        Diversity[Diversity Analysis]
-        Questions[Interview Questions]
-    end
+### Pipeline (how a screening runs)
 
-    subgraph ui [Frontend]
-        Dashboard[Dashboard]
-        Candidates[Candidates]
-        Analytics[Analytics]
-        Copilot[Copilot]
-    end
+1. **Parse CVs in batches** (many CVs per LLM call) with capped concurrency.
+2. **Embed** the JD + all CVs in one batched embedding call.
+3. **Score & rank locally** (no API): cosine similarity + sub-scores.
+4. **Explain** the shortlist + hidden gems in batched LLM calls; the rest get instant
+   deterministic explanations.
 
-    JD --> DocParser --> AIParse
-    CVs --> DocParser --> AIParse
-    AIParse --> Embed --> Chroma
-    AIParse --> Score --> Explain
-    Score --> Diversity
-    Score --> Questions
-    Score --> Dashboard
-    Score --> Candidates
-    Diversity --> Analytics
+This keeps a 20–25 CV batch **well under 60 s** and within the free-tier rate limits.
+
+### Scoring formula
+
+```
+Overall =
+  32% Skill match     (must-haves weighted 2× vs nice-to-haves)
++ 25% Semantic fit    (JD↔CV embedding cosine similarity)
++ 18% Experience      (years vs required, capped)
++ 10% Domain          (semantic proximity)
++  7% Education
++  8% Soft skills
 ```
 
 ---
 
+<<<<<<< HEAD
 ## Prerequisites
 
 | Tool | Version | Purpose |
@@ -116,12 +141,33 @@ flowchart LR
 | **Python** | 3.12+ | FastAPI backend |
 | **PostgreSQL** | 16+ | Persistent storage |
 | **OpenAI API key** | _(optional)_ | Live AI; omit for demo mode |
+=======
+## Quick start
 
----
+### Local (recommended for development)
+>>>>>>> 5bbffe2598240d8be1bfb285e19863979e6036b8
 
+```bash
+# 1. Backend
+cd backend
+python3.11 -m venv venv && source venv/bin/activate
+pip install -r requirements.txt
+cp ../.env.example ../.env        # then add your GEMINI_API_KEY (optional)
+uvicorn app.main:app --reload --port 8000
+
+<<<<<<< HEAD
 ## Quick Start (Local)
 
 ### 1. Clone and configure environment
+=======
+# 2. Frontend (new terminal)
+cd frontend
+npm install
+npm run dev                        # http://localhost:3000
+```
+
+### Docker
+>>>>>>> 5bbffe2598240d8be1bfb285e19863979e6036b8
 
 ```bash
 git clone <repo-url>
@@ -184,15 +230,20 @@ Open [http://localhost:3000](http://localhost:3000)
 |---------|-----|
 | Frontend | http://localhost:3000 |
 | Backend API | http://localhost:8000 |
-| Swagger Docs | http://localhost:8000/docs |
-| Health Check | http://localhost:8000/health |
+| Swagger docs | http://localhost:8000/docs |
 
+<<<<<<< HEAD
 **Demo mode** is enabled by default (`DEMO_MODE=true`). No OpenAI API key required — intelligent mock AI handles parsing, scoring, explanations, and questions for offline demos and grading.
+=======
+In the UI: paste a JD (or click **Use sample**) → **Parse requirements** → drop CVs (or
+**Load 25 sample CVs**) → **Screen candidates**.
+>>>>>>> 5bbffe2598240d8be1bfb285e19863979e6036b8
 
 ---
 
-## Demo Workflow (Step by Step)
+## ⚠️ Gemini API key & quota (read this)
 
+<<<<<<< HEAD
 Use this flow to demonstrate all assignment requirements to evaluators.
 
 1. Open http://localhost:3000 → **Launch Dashboard**
@@ -211,12 +262,63 @@ Use this flow to demonstrate all assignment requirements to evaluators.
    - **Copilot** — chat over the candidate pool
 9. Open a candidate profile → radar chart, explanation quadrants, **auto-generated interview questions**
 10. Download CSV/PDF exports from candidate or analytics pages
+=======
+The app defaults to **`gemini-2.5-flash-lite`**. Two things to know:
+>>>>>>> 5bbffe2598240d8be1bfb285e19863979e6036b8
 
-### One-Command Seed (Skip Manual Upload)
+- **`gemini-2.0-flash` has zero free quota** and 429s instantly — do not use it.
+  `gemini-2.5-flash` and `-lite` work.
+- **The free tier is tiny** (~20 generate requests/day, ~10/min per model). That's enough
+  to *try* the app a couple of times per day, but for a reliable live demo you should
+  **enable billing** on your Google AI Studio / Cloud project. flash-lite is ~$0.10 / 1M
+  input tokens — a full 25-CV screening costs well under $0.01.
+
+If the key is missing or quota is exhausted, the app **degrades gracefully** to a
+deterministic heuristic engine (a circuit breaker skips the API after a daily-quota hit),
+so it never crashes — ranking still works via embeddings, and explanations fall back to a
+specific, CV-aware heuristic. The header shows whether AI is live or offline.
+
+---
+
+## Deployment
+
+- **Backend → Render** (`render.yaml` blueprint, Docker). Set env vars in the dashboard:
+  `GEMINI_API_KEY`, `DEMO_MODE=false`, `CORS_ORIGINS=https://<your-vercel-app>.vercel.app`.
+- **Frontend → Vercel** (root `frontend/`). Set `NEXT_PUBLIC_API_URL=https://<your-render-app>.onrender.com`.
+
+---
+
+## Project layout
+
+```
+backend/app/
+  main.py        FastAPI app + CORS + health
+  config.py      settings (model, batch sizes, rate-limit knobs)
+  gemini.py      Gemini client: retry/backoff, concurrency cap, circuit breaker, embeddings
+  ai.py          JD/CV parsing, explanations, questions, chat + heuristic fallbacks
+  ranking.py     semantic + structured scoring
+  diversity.py   bias flags + hidden-gem detection
+  pipeline.py    screening orchestration (batched, async, progress)
+  documents.py   PDF/DOCX/TXT text extraction
+  routers.py     REST endpoints
+  report.py      CSV + PDF export
+  store.py       in-memory data store
+  schemas.py     Pydantic models
+  tests/         deterministic offline pipeline tests
+
+frontend/src/
+  app/page.tsx              workspace (setup → processing → results)
+  components/recruit/       setup, results, detail drawer, diversity panel, copilot, ui-bits
+  lib/api.ts                typed API client
+sample-data/                1 JD + 25 sample CVs (also bundled in frontend/public/samples)
+```
+
+## Tests
 
 With the backend running and PostgreSQL available:
 
 ```bash
+<<<<<<< HEAD
 cd backend && source .venv/bin/activate
 cd ..
 python3 scripts/seed_data.py
@@ -472,3 +574,11 @@ Progress is polled via `GET /processing/{job_id}`.
 ## License
 
 Built for university evaluation and demonstration purposes.
+=======
+cd backend && source venv/bin/activate && pytest
+```
+
+Tests run in offline heuristic mode (no API/quota needed) and lock in document extraction,
+the scoring math, strong-beats-weak ranking, missing-must-have detection, the full async
+screening pipeline, and diversity flagging.
+>>>>>>> 5bbffe2598240d8be1bfb285e19863979e6036b8
